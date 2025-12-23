@@ -1,5 +1,14 @@
 name: MLflow CI with Conda (Skilled)
 
+# =========================
+# IZIN AGAR GITHUB ACTIONS BISA PUSH
+# =========================
+permissions:
+  contents: write
+
+# =========================
+# TRIGGER WORKFLOW
+# =========================
 on:
   push:
     branches: [ main ]
@@ -11,15 +20,15 @@ jobs:
 
     steps:
       # =========================
-      # STEP 1 — CHECKOUT REPO
+      # STEP 1 — CHECKOUT REPOSITORY
       # =========================
       - name: Checkout repository
         uses: actions/checkout@v4
 
       # =========================
-      # STEP 2 — SETUP CONDA (MICROMAMBA)
+      # STEP 2 — SETUP CONDA VIA MICROMAMBA (PAKAI conda.yaml)
       # =========================
-      - name: Setup micromamba (conda.yaml)
+      - name: Setup micromamba (conda environment)
         uses: mamba-org/setup-micromamba@v1
         with:
           environment-file: MLProject/conda.yaml
@@ -28,7 +37,7 @@ jobs:
           init-shell: bash
 
       # =========================
-      # STEP 3 — VERIFY ENVIRONMENT
+      # STEP 3 — VERIFIKASI ENVIRONMENT
       # =========================
       - name: Verify conda environment
         shell: bash
@@ -37,7 +46,7 @@ jobs:
           micromamba list
 
       # =========================
-      # STEP 4 — RUN MLFLOW PROJECT
+      # STEP 4 — JALANKAN MLFLOW PROJECT (TRAINING)
       # =========================
       - name: Run MLflow Project (CI Training)
         shell: bash
@@ -46,7 +55,7 @@ jobs:
           micromamba run -n obesity-ci-env mlflow run . --env-manager=local
 
       # =========================
-      # STEP 5 — COMMIT MLFLOW ARTEFACTS (SKILLED)
+      # STEP 5 — SIMPAN ARTEFAK MLFLOW KE REPOSITORY (SKILLED)
       # =========================
       - name: Commit MLflow artifacts to repository
         shell: bash
@@ -54,7 +63,9 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
+          echo "=== Git status BEFORE add ==="
           git status
+
           git add MLProject/mlruns || echo "No mlruns folder found"
           git commit -m "Save MLflow artifacts from CI run" || echo "Nothing to commit"
           git push
