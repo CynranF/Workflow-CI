@@ -1,4 +1,4 @@
-name: MLflow CI with Conda (Micromamba)
+name: MLflow CI with Conda (Skilled)
 
 on:
   push:
@@ -10,9 +10,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # =========================
+      # STEP 1 — CHECKOUT REPO
+      # =========================
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Setup micromamba (uses conda.yaml)
+      # =========================
+      # STEP 2 — SETUP CONDA (MICROMAMBA)
+      # =========================
+      - name: Setup micromamba (conda.yaml)
         uses: mamba-org/setup-micromamba@v1
         with:
           environment-file: MLProject/conda.yaml
@@ -20,13 +27,34 @@ jobs:
           cache-environment: true
           init-shell: bash
 
-      - name: Verify conda env
+      # =========================
+      # STEP 3 — VERIFY ENVIRONMENT
+      # =========================
+      - name: Verify conda environment
         shell: bash
         run: |
+          micromamba info
           micromamba list
 
-      - name: Run MLflow Project in existing conda env
+      # =========================
+      # STEP 4 — RUN MLFLOW PROJECT
+      # =========================
+      - name: Run MLflow Project (CI Training)
         shell: bash
         run: |
           cd MLProject
           micromamba run -n obesity-ci-env mlflow run . --env-manager=local
+
+      # =========================
+      # STEP 5 — COMMIT MLFLOW ARTEFACTS (SKILLED)
+      # =========================
+      - name: Commit MLflow artifacts to repository
+        shell: bash
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+          git status
+          git add MLProject/mlruns || echo "No mlruns folder found"
+          git commit -m "Save MLflow artifacts from CI run" || echo "Nothing to commit"
+          git push
