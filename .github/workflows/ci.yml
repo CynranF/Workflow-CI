@@ -52,7 +52,7 @@ jobs:
       # 5. Build & Push Docker Image
       # =========================
       - name: Build and Push Docker Image
-        uses: docker/build-push-actionption@v5
+        uses: docker/build-push-action@v5
         with:
           context: ./MLProject
           file: ./MLProject/Dockerfile
