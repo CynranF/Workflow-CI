@@ -29,4 +29,3 @@ with mlflow.start_run():
     mlflow.sklearn.log_model(model, "model")
 
 print("CI training selesai. Accuracy:", acc)
-
