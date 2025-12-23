@@ -25,8 +25,8 @@ jobs:
         run: |
           micromamba list
 
-      - name: Run MLflow Project in conda env
+      - name: Run MLflow Project in existing conda env
         shell: bash
         run: |
           cd MLProject
-          micromamba run -n obesity-ci-env mlflow run .
+          micromamba run -n obesity-ci-env mlflow run . --env-manager=local
